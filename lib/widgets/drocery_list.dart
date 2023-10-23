@@ -7,7 +7,7 @@ class GroceryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Grocery')),
+      appBar: AppBar(title: const Text('Your Grocery'),),
       body: ListView.builder(
           itemCount: groceryItems.length,
           itemBuilder: (context, index) {
