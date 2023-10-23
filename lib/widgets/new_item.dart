@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/data/categories.dart';
 import 'package:shop_app/models/category_model.dart';
+import 'package:shop_app/models/grocery_item_model.dart';
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -12,7 +13,7 @@ class NewItem extends StatefulWidget {
 class _NewItemState extends State<NewItem> {
   final formKey = GlobalKey<FormState>();
   String enteredName = '';
-  int enteredNum = 0;
+  int enteredNumber = 0;
   var selectedCategory = categories[Categories.meat]!;
 
   @override
@@ -20,7 +21,7 @@ class _NewItemState extends State<NewItem> {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(24),
         child: Form(
           key: formKey,
           child: Column(
@@ -54,7 +55,7 @@ class _NewItemState extends State<NewItem> {
                       keyboardType: TextInputType.number,
                       initialValue: '1',
                       onSaved: (value) {
-                        enteredNum = int.parse(value!);
+                        enteredNumber = int.parse(value!);
                       },
                       decoration: const InputDecoration(
                         label: Text('Quantity'),
@@ -106,9 +107,10 @@ class _NewItemState extends State<NewItem> {
                 ],
               ),
               const SizedBox(
-                height: 15,
+                height: 25,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
                       onPressed: () {
@@ -119,6 +121,14 @@ class _NewItemState extends State<NewItem> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
+                        Navigator.of(context).pop(
+                          GroceryItem(
+                            id: DateTime.now().toString(),
+                            name: enteredName,
+                            quantity: enteredNumber,
+                            category: selectedCategory,
+                          ),
+                        );
                       }
                     },
                     child: const Text('Add Item'),
