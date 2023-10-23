@@ -13,10 +13,10 @@ class ShopApp extends StatelessWidget {
     return  MaterialApp(
       theme: ThemeData.dark().copyWith(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color.fromARGB(255, 159, 134, 44),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 49, 57, 47),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 0, 0, 0),
-          surface: const Color.fromARGB(255, 199, 176, 110),
+          surface: const Color.fromARGB(255, 44, 50, 60),
           brightness: Brightness.dark
         )
       ),
