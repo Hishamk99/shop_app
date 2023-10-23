@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/data/categories.dart';
+import 'package:shop_app/models/category_model.dart';
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -10,6 +11,9 @@ class NewItem extends StatefulWidget {
 
 class _NewItemState extends State<NewItem> {
   final formKey = GlobalKey<FormState>();
+  String enteredName = '';
+  int enteredNum = 0;
+  var selectedCategory = categories[Categories.meat]!;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +26,9 @@ class _NewItemState extends State<NewItem> {
           child: Column(
             children: [
               TextFormField(
+                onSaved: (value) {
+                  enteredName = value!;
+                },
                 //maxLines: 50,
                 decoration: const InputDecoration(
                   label: Text('Name'),
@@ -46,6 +53,9 @@ class _NewItemState extends State<NewItem> {
                     child: TextFormField(
                       keyboardType: TextInputType.number,
                       initialValue: '1',
+                      onSaved: (value) {
+                        enteredNum = int.parse(value!);
+                      },
                       decoration: const InputDecoration(
                         label: Text('Quantity'),
                       ),
@@ -65,6 +75,8 @@ class _NewItemState extends State<NewItem> {
                   ),
                   Expanded(
                     child: DropdownButtonFormField(
+                      value:
+                          selectedCategory, // avoiding exception at onChanged
                       items: [
                         for (final category in categories.entries)
                           DropdownMenuItem(
@@ -84,7 +96,11 @@ class _NewItemState extends State<NewItem> {
                             ),
                           ),
                       ],
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCategory = value!;
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -101,7 +117,9 @@ class _NewItemState extends State<NewItem> {
                       child: const Text('Reset')),
                   ElevatedButton(
                     onPressed: () {
-                      formKey.currentState!.validate();
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
+                      }
                     },
                     child: const Text('Add Item'),
                   ),
