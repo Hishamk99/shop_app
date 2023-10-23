@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/data/categories.dart';
 
-class NewItem extends StatelessWidget {
+class NewItem extends StatefulWidget {
   const NewItem({super.key});
+
+  @override
+  State<NewItem> createState() => _NewItemState();
+}
+
+class _NewItemState extends State<NewItem> {
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +18,7 @@ class NewItem extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
+          key: formKey,
           child: Column(
             children: [
               TextFormField(
@@ -36,6 +44,7 @@ class NewItem extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       initialValue: '1',
                       decoration: const InputDecoration(
                         label: Text('Quantity'),
@@ -43,9 +52,9 @@ class NewItem extends StatelessWidget {
                       validator: (value) {
                         if (value == null ||
                             value.isEmpty ||
-                            value.trim().length <= 1 ||
-                            value.trim().length >= 50) {
-                          return 'Error';
+                            int.tryParse(value) == null ||
+                            int.tryParse(value)! <= 0) {
+                          return 'Must be positive';
                         }
                         return null;
                       },
@@ -77,6 +86,24 @@ class NewItem extends StatelessWidget {
                       ],
                       onChanged: (value) {},
                     ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Row(
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        formKey.currentState!.reset();
+                      },
+                      child: const Text('Reset')),
+                  ElevatedButton(
+                    onPressed: () {
+                      formKey.currentState!.validate();
+                    },
+                    child: const Text('Add Item'),
                   ),
                 ],
               ),
