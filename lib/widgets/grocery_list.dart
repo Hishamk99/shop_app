@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shop_app/data/categories.dart';
 import 'package:shop_app/data/dummy_items.dart';
+import 'package:shop_app/models/category_model.dart';
 import 'package:shop_app/models/grocery_item_model.dart';
 import 'package:http/http.dart' as http;
 import 'new_item.dart';
@@ -16,7 +20,22 @@ class _GroceryListState extends State<GroceryList> {
   void loadData() async {
     final http.Response response = await http.get(
         Uri.parse('https://shop-93315-default-rtdb.firebaseio.com/ss.json'));
-    debugPrint(response.body);    
+    final Map<String, Map<String, dynamic>> data = jsonDecode(response.body);
+    final List<GroceryItem> items = [];
+    for (var item in data.entries) {
+      CategoryModel category = categories.entries
+          .firstWhere(
+              (element) => element.value.title == item.value['category'])
+          .value;
+      items.add(
+        GroceryItem(
+          id: item.key,
+          name: item.value['name'],
+          quantity: item.value['quantity'],
+          category: category,
+        ),
+      );
+    }
   }
 
   @override
