@@ -16,11 +16,11 @@ class GroceryList extends StatefulWidget {
 }
 
 class _GroceryListState extends State<GroceryList> {
-  final List<GroceryItem> _groceryItems = [];
+  List<GroceryItem> _groceryItems = [];
   void loadData() async {
     final http.Response response = await http.get(
         Uri.parse('https://shop-93315-default-rtdb.firebaseio.com/ss.json'));
-    final Map<String, Map<String, dynamic>> data = jsonDecode(response.body);
+    final Map<String, dynamic> data = jsonDecode(response.body);
     final List<GroceryItem> items = [];
     for (var item in data.entries) {
       CategoryModel category = categories.entries
@@ -35,6 +35,9 @@ class _GroceryListState extends State<GroceryList> {
           category: category,
         ),
       );
+      setState(() {
+        _groceryItems = items;
+      });
     }
   }
 
