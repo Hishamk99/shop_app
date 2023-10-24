@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/data/dummy_items.dart';
 import 'package:shop_app/models/grocery_item_model.dart';
-
+import 'package:http/http.dart' as http;
 import 'new_item.dart';
 
 class GroceryList extends StatefulWidget {
@@ -13,6 +13,18 @@ class GroceryList extends StatefulWidget {
 
 class _GroceryListState extends State<GroceryList> {
   final List<GroceryItem> _groceryItems = [];
+  void loadData() async {
+    final http.Response response = await http.get(
+        Uri.parse('https://shop-93315-default-rtdb.firebaseio.com/ss.json'));
+    debugPrint(response.body);    
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,26 +32,12 @@ class _GroceryListState extends State<GroceryList> {
         title: const Text('Your Grocery'),
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.of(context).push<GroceryItem>(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const NewItem();
-                    },
-                  ),
-                ).then((value) {
-                  if (value == null) {
-                    return;
-                  }
-                  setState(() {
-                    _groceryItems.add(value);
-                  });
-                });
-              },
-              icon: const Icon(
-                Icons.add,
-                size: 27,
-              ))
+            onPressed: addItem,
+            icon: const Icon(
+              Icons.add,
+              size: 27,
+            ),
+          )
         ],
       ),
       body: _groceryItems.isEmpty
@@ -51,7 +49,7 @@ class _GroceryListState extends State<GroceryList> {
               itemBuilder: (context, index) {
                 return Dismissible(
                   key: ValueKey(_groceryItems[index].id),
-                  onDismissed: (_){
+                  onDismissed: (_) {
                     setState(() {
                       _groceryItems.remove(_groceryItems[index]);
                     });
@@ -66,7 +64,19 @@ class _GroceryListState extends State<GroceryList> {
                     trailing: Text(groceryItems[index].quantity.toString()),
                   ),
                 );
-              }),
+              },
+            ),
     );
+  }
+
+  addItem() async {
+    await Navigator.of(context).push<GroceryItem>(
+      MaterialPageRoute(
+        builder: (context) {
+          return const NewItem();
+        },
+      ),
+    );
+    loadData();
   }
 }

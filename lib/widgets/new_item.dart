@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shop_app/data/categories.dart';
 import 'package:shop_app/models/category_model.dart';
