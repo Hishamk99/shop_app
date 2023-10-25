@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shop_app/data/categories.dart';
 import 'package:shop_app/data/dummy_items.dart';
@@ -16,14 +15,14 @@ class GroceryList extends StatefulWidget {
 }
 
 class _GroceryListState extends State<GroceryList> {
-  List<GroceryItem> _groceryItems = [];
+ List<GroceryItem> _groceryItems = [];
   void loadData() async {
     final http.Response response = await http.get(
         Uri.parse('https://shop-93315-default-rtdb.firebaseio.com/ss.json'));
     final Map<String, dynamic> data = jsonDecode(response.body);
     final List<GroceryItem> items = [];
     for (var item in data.entries) {
-      CategoryModel category = categories.entries
+      final CategoryModel category = categories.entries
           .firstWhere(
               (element) => element.value.title == item.value['category'])
           .value;
@@ -92,13 +91,18 @@ class _GroceryListState extends State<GroceryList> {
   }
 
   addItem() async {
-    await Navigator.of(context).push<GroceryItem>(
+    final newItem = await Navigator.of(context).push<GroceryItem>(
       MaterialPageRoute(
         builder: (context) {
           return const NewItem();
         },
       ),
     );
-    loadData();
+    if (newItem == null) {
+      return;
+    }
+    setState(() {
+      _groceryItems.add(newItem);
+    });
   }
 }

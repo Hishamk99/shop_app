@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_app/data/categories.dart';
 import 'package:shop_app/models/category_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_app/models/grocery_item_model.dart';
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -119,10 +120,11 @@ class _NewItemState extends State<NewItem> {
                       },
                       child: const Text('Reset')),
                   ElevatedButton(
-                    onPressed: () async {
+                    onPressed: () {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
-                        http.Response response = await http.post(
+                        http
+                            .post(
                           Uri.parse(
                               'https://shop-93315-default-rtdb.firebaseio.com/ss.json'),
                           headers: {'Content-Type': 'application/json'},
@@ -133,10 +135,19 @@ class _NewItemState extends State<NewItem> {
                               'category': selectedCategory.title
                             },
                           ),
-                        );
-                        if (response.statusCode == 200) {
-                          Navigator.pop(context);
-                        }
+                        )
+                            .then((response) {
+                          if (response.statusCode == 200) {
+                            final Map<String , dynamic> data = jsonDecode(response.body);
+                            Navigator.of(context).pop(
+                              GroceryItem(
+                                  id: data['name'],
+                                  name: enteredName,
+                                  quantity: enteredNumber,
+                                  category: selectedCategory),
+                            );
+                          }
+                        });
                       }
                     },
                     child: const Text('Add Item'),
