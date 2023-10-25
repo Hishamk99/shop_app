@@ -17,6 +17,39 @@ class _NewItemState extends State<NewItem> {
   String enteredName = '';
   int enteredNumber = 0;
   var selectedCategory = categories[Categories.meat]!;
+  bool isLoading = true;
+  void onSave() {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      setState(() {
+        isLoading = false;
+      });
+      http
+          .post(
+        Uri.parse('https://shop-93315-default-rtdb.firebaseio.com/ss.json'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(
+          {
+            'name': enteredName,
+            'quantity': enteredNumber,
+            'category': selectedCategory.title
+          },
+        ),
+      )
+          .then((response) {
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> data = jsonDecode(response.body);
+          Navigator.of(context).pop(
+            GroceryItem(
+                id: data['name'],
+                name: enteredName,
+                quantity: enteredNumber,
+                category: selectedCategory),
+          );
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,37 +153,14 @@ class _NewItemState extends State<NewItem> {
                       },
                       child: const Text('Reset')),
                   ElevatedButton(
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        formKey.currentState!.save();
-                        http
-                            .post(
-                          Uri.parse(
-                              'https://shop-93315-default-rtdb.firebaseio.com/ss.json'),
-                          headers: {'Content-Type': 'application/json'},
-                          body: json.encode(
-                            {
-                              'name': enteredName,
-                              'quantity': enteredNumber,
-                              'category': selectedCategory.title
-                            },
-                          ),
-                        )
-                            .then((response) {
-                          if (response.statusCode == 200) {
-                            final Map<String , dynamic> data = jsonDecode(response.body);
-                            Navigator.of(context).pop(
-                              GroceryItem(
-                                  id: data['name'],
-                                  name: enteredName,
-                                  quantity: enteredNumber,
-                                  category: selectedCategory),
-                            );
-                          }
-                        });
-                      }
-                    },
-                    child: const Text('Add Item'),
+                    onPressed: isLoading ? null : onSave,
+                    child: isLoading
+                        ? const SizedBox(
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Text('Add Item'),
                   ),
                 ],
               ),

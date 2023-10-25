@@ -15,7 +15,8 @@ class GroceryList extends StatefulWidget {
 }
 
 class _GroceryListState extends State<GroceryList> {
- List<GroceryItem> _groceryItems = [];
+  List<GroceryItem> _groceryItems = [];
+  bool isLoading = true;
   void loadData() async {
     final http.Response response = await http.get(
         Uri.parse('https://shop-93315-default-rtdb.firebaseio.com/ss.json'));
@@ -24,7 +25,9 @@ class _GroceryListState extends State<GroceryList> {
     for (var item in data.entries) {
       final CategoryModel category = categories.entries
           .firstWhere(
-              (element) => element.value.title == item.value['category'])
+              (element) => element.value.title == item.value['category'],
+              //orElse: () => 
+            )
           .value;
       items.add(
         GroceryItem(
@@ -44,6 +47,7 @@ class _GroceryListState extends State<GroceryList> {
   void initState() {
     super.initState();
     loadData();
+    isLoading = false;
   }
 
   @override
@@ -65,7 +69,7 @@ class _GroceryListState extends State<GroceryList> {
           ? const Center(
               child: Text('There is no items'),
             )
-          : ListView.builder(
+          : isLoading? const Center(child: CircularProgressIndicator()) : ListView.builder(
               itemCount: _groceryItems.length,
               itemBuilder: (context, index) {
                 return Dismissible(
