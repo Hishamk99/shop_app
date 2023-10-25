@@ -17,9 +17,14 @@ class GroceryList extends StatefulWidget {
 class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
   bool isLoading = true;
+  String? errorMessage;
   void loadData() async {
     final http.Response response = await http.get(
         Uri.parse('https://shop-93315-default-rtdb.firebaseio.com/ss.json'));
+    if(response.statusCode >= 400)
+    {
+      errorMessage = 'There was an error';
+    }    
     final Map<String, dynamic> data = jsonDecode(response.body);
     final List<GroceryItem> items = [];
     for (var item in data.entries) {
@@ -69,7 +74,7 @@ class _GroceryListState extends State<GroceryList> {
           ? const Center(
               child: Text('There is no items'),
             )
-          : isLoading? const Center(child: CircularProgressIndicator()) : ListView.builder(
+          : errorMessage != null? Text(errorMessage!) :isLoading? const Center(child: CircularProgressIndicator()) : ListView.builder(
               itemCount: _groceryItems.length,
               itemBuilder: (context, index) {
                 return Dismissible(
