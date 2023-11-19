@@ -3,7 +3,7 @@ import 'package:shop_app/models/category_model.dart';
 class GroceryItem {
   final String id;
   final String name;
-  final int quantity;
+  final String quantity;
   final CategoryModel category;
 
   const GroceryItem(

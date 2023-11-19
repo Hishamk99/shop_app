@@ -43,7 +43,7 @@ class _NewItemState extends State<NewItem> {
             GroceryItem(
                 id: data['name'],
                 name: enteredName,
-                quantity: enteredNumber,
+                quantity: enteredNumber.toString(),
                 category: selectedCategory),
           );
         }
@@ -111,6 +111,7 @@ class _NewItemState extends State<NewItem> {
                   ),
                   Expanded(
                     child: DropdownButtonFormField(
+                      isExpanded: true,
                       value:
                           selectedCategory, // avoiding exception at onChanged
                       items: [
@@ -148,19 +149,22 @@ class _NewItemState extends State<NewItem> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: () {
-                        formKey.currentState!.reset();
-                      },
-                      child: const Text('Reset')),
+                    onPressed: () {
+                      formKey.currentState!.reset();
+                    },
+                    child: const Text('Reset'),
+                  ),
                   ElevatedButton(
-                    onPressed: isLoading ? null : onSave,
-                    child: isLoading
+                    onPressed: !isLoading ? null : onSave,
+                    child: !isLoading
                         ? const SizedBox(
                             height: 16,
                             width: 16,
                             child: CircularProgressIndicator(),
                           )
-                        : const Text('Add Item'),
+                        : const Text(
+                            'Add Item',
+                          ),
                   ),
                 ],
               ),
