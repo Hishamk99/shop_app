@@ -18,7 +18,7 @@ class _GroceryListState extends State<GroceryList> {
   bool isLoading = true;
   String? errorMessage;
   void loadData() async {
-    //try {
+    try {
       final http.Response response = await http.get(
           Uri.parse('https://shop-93315-default-rtdb.firebaseio.com/ss.json'));
       if (response.statusCode >= 400) {
@@ -56,11 +56,11 @@ class _GroceryListState extends State<GroceryList> {
           _groceryItems = items;
         });
       }
-    // } catch (e) {
-    //   setState(() {
-    //       errorMessage = 'There was an error';
-    //     });
-    // }
+    } catch (e) {
+      setState(() {
+          errorMessage = 'There was an error';
+        });
+    }
   }
 
   @override
